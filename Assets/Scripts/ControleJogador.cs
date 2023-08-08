@@ -17,6 +17,8 @@ public class ControleJogador : MonoBehaviour
     Vector3 moveDirection = Vector3.zero;
     Vector2 rotation = Vector2.zero;
 
+    public Animator animator;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -34,10 +36,20 @@ public class ControleJogador : MonoBehaviour
             float curSpeedY = speed * Input.GetAxis("Horizontal");
             moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
+            int velocidade = (int)curSpeedX;
+            animator.SetInteger("velocidade", velocidade);
+
+            int lado = (int)curSpeedY;
+            animator.SetInteger("lado", lado);
+
+
             if (Input.GetButton("Jump"))
             {
                 moveDirection.y = jumpSpeed;
+                animator.SetBool("pulando", true);
             }
+        } else {
+            animator.SetBool("pulando", false);
         }
 
         // Aplica gravidade
@@ -69,5 +81,13 @@ public class ControleJogador : MonoBehaviour
         transform.eulerAngles = new Vector2(0, rotation.y);
 
     }
+
+    void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Moeda")) {
+            other.gameObject.SetActive(false);
+            animator.SetBool("pulando", true);            
+        }
+    }
+
 }
 
